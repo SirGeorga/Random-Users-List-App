@@ -7,7 +7,7 @@
 
 
     <ImageView
-        android:id="@+id/ivTrackImage"
+        android:id="@+id/ivUserImage"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginTop="8dp"
