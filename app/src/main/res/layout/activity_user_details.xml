@@ -9,37 +9,78 @@
         android:padding="16dp">
 
         <ImageView
-            android:id="@+id/picture"
+            android:id="@+id/tvFullImage"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="350dp"
+            android:src="@drawable/ic_user_placeholder"/>
 
         <TextView
-            android:id="@+id/name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:paddingTop="8dp" />
-
-        <TextView
-            android:id="@+id/location"
+            android:id="@+id/tvFullName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:paddingTop="8dp" />
-
+            android:textSize="30sp"
+            android:paddingTop="8dp"
+            android:textColor="@color/black"
+            android:text="Иван Иванов"/>
         <TextView
-            android:id="@+id/phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:paddingTop="8dp" />
-
+            android:textSize="14sp"
+            android:paddingTop="8dp"
+            android:text="Возраст:"/>
         <TextView
-            android:id="@+id/email"
+            android:id="@+id/tvFullAge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:paddingTop="8dp" />
+            android:paddingTop="8dp"
+            android:textColor="@color/black"
+            android:text="69" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:paddingTop="8dp"
+            android:text="Адрес:"/>
+
+        <TextView
+            android:id="@+id/tvFullAdress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:paddingTop="8dp"
+            android:textColor="@color/black"
+            android:text="Новоильинка Новосёлов 123" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:paddingTop="8dp"
+            android:text="Телефон:"/>
+        <TextView
+            android:id="@+id/tvFullPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:paddingTop="8dp"
+            android:textColor="@color/black"
+            android:text="+79876543210" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:paddingTop="8dp"
+            android:text="Почта:"/>
+        <TextView
+            android:id="@+id/tvFullEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:paddingTop="8dp"
+            android:textColor="@color/black"
+            android:text="test@test.ru" />
 
     </LinearLayout>
 

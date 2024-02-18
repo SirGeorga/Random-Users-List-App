@@ -25,7 +25,7 @@ class UserViewHolder(parent: ViewGroup) :
         userAdress.text = "${user.location.country} ${user.location.city} ${user.location.street}"
         userPhoneNumber.text = user.phone
         Glide.with(itemView)
-            .load(user.picture.medium)
+            .load(user.picture.thumbnail)
             .into(userImage)
         }
 }

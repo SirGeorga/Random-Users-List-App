@@ -1,12 +1,14 @@
 package com.example.randomnameslist
 import API
 import UserListAdapter
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,19 +22,24 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var usersList: RecyclerView
     private var users = ArrayList<User>()
-    private val adapter = UserListAdapter()
+    private val adapter = UserListAdapter(users)
+    private lateinit var swipeToRefresh: SwipeRefreshLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         usersList = findViewById(R.id.rvUsers)
-        adapter.usersNames = users
+        adapter.users = users
         usersList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         usersList.adapter = adapter
 
-        getAllComments()
+        swipeToRefresh = findViewById(R.id.strSwiper)
+        getAllUsers()
 
+        swipeToRefresh.setOnRefreshListener {
+            getAllUsers()
+        }
 
 /*
         apiService.getUsers(1).enqueue(object : Callback<UsersResponse> {
@@ -60,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         })*/
     }
 
-    private fun getAllComments() {
+    private fun getAllUsers() {
         val api = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -79,6 +86,7 @@ class MainActivity : AppCompatActivity() {
                         adapter.notifyDataSetChanged()
                         users?.forEach { user ->
                             Log.i(TAG, "onResponse: ${user.name.first} ${user.name.last}")
+                            swipeToRefresh.isRefreshing = false
                            /* Toast.makeText(
                                 applicationContext,
                                  "Нашёлся ${user.name.first} ${user.name.last}",
@@ -91,19 +99,24 @@ class MainActivity : AppCompatActivity() {
                             "Ничего не нашлось",
                             Toast.LENGTH_LONG
                         ).show()
+
+                        swipeToRefresh.isRefreshing = false
                     }
                 } else {
                     Toast.makeText(
                         applicationContext,
-                        "Проблемы со связью. Чел, чекни тырнет свой",
+                        "Проблемы со связью. Проверьте подключение к интернету",
                         Toast.LENGTH_LONG
                     ).show()
+
+                    swipeToRefresh.isRefreshing = false
                 }
             }
 
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                 Log.i(TAG,"onFailure: ${t.message}")
-                Toast.makeText(applicationContext, "Проблемы со связью. Чел, чекни тырнет свой", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, "Проблемы со связью. Проверьте подключение к интернету", Toast.LENGTH_LONG).show()
+                swipeToRefresh.isRefreshing = false
             }
 
         })
@@ -127,5 +140,4 @@ class MainActivity : AppCompatActivity() {
         }*/
         }
     }
-
 }
