@@ -6,4 +6,6 @@
     <string name="st_random_users">Случайные пользователи</string>
     <string name="st_refresh_message">Не удалось загрузить данные пользователей или список пуст. Потяните вниз для повторной попытки \n↓</string>
     <string name="st_clear_list">Очистить список</string>
+    <string name="st_no_internet">Проблемы со связью. Проверьте подключение к интернету</string>
+    <string name="st_something_wrong">Что-то пошло не так. Проверьте подключение к интернету</string>
 </resources>

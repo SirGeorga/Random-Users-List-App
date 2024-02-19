@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
-import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -27,32 +27,33 @@ const val USERS_PREF_KEY = "shared_pref_key"
 class MainActivity : AppCompatActivity() {
     private val BASE_URL = "https://randomuser.me/"
     private val TAG: String = "CHECK_RESPONSE"
-
-    private lateinit var usersList: RecyclerView
+    private lateinit var rvUsersList: RecyclerView
     private var users = ArrayList<User>()
     private val adapter = UserListAdapter(users)
     private lateinit var swipeToRefresh: SwipeRefreshLayout
     private lateinit var emptyListMessage: TextView
     private lateinit var btClearUsersList: Button
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        this.title = "Список пользователей"
         val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
-        users = createUsersListFromJson(sharedPreferences.getString(USERS_PREF_KEY, null))
-
         initViews()
-
+        progressBarVisible()
+        users = createUsersListFromJson(sharedPreferences.getString(USERS_PREF_KEY, null))
         adapter.users = users
-        usersList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        usersList.adapter = adapter
+        rvUsersList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        rvUsersList.adapter = adapter
         swipeToRefresh = findViewById(R.id.strSwiper)
         if (users.isEmpty()) {
             getAllUsers()
         }
-        messageVisibilityCheck()
+        messageVisibility()
 
         swipeToRefresh.setOnRefreshListener {
+            swipeToRefresh.isRefreshing = false
             getAllUsers()
         }
 
@@ -60,45 +61,24 @@ class MainActivity : AppCompatActivity() {
             users.clear()
             adapter.notifyDataSetChanged()
             sharedPreferences.edit().clear().apply()
-            messageVisibilityCheck()
+            messageVisibility()
         }
 
         btClearUsersList.setOnLongClickListener {
-            Toast.makeText(applicationContext, "Очистить список", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(
+                applicationContext,
+                "Полное очищение списка пользователей, в том числе из памяти устройства",
+                Toast.LENGTH_SHORT
+            ).show()
             true
         }
-
-/*
-        apiService.getUsers(1).enqueue(object : Callback<UsersResponse> {
-            override fun onResponse(call: Call<UsersResponse>,
-                                    response: Response<UsersResponse>) {
-                if (response.code() == 200) {
-                    users.clear()
-                    if (response.body()?.results?.isNotEmpty() == true) {
-                        users.addAll(response.body()?.results!!)
-                        adapter.notifyDataSetChanged()
-                    }
-                    if (users.isEmpty()) {
-                        showMessage(getString(R.string.nothing_found), "")
-                    } else {
-                        showMessage("", "")
-                    }
-                } else {
-                    showMessage(getString(R.string.something_went_wrong) + response.code(), response.code().toString())
-                }
-            }
-            override fun onFailure(call: Call<UsersResponse>, t: Throwable) {
-                showMessage(getString(R.string.something_went_wrong_harder), t.message.toString())
-            }
-
-        })*/
     }
 
     fun initViews() {
-        usersList = findViewById(R.id.rvUsers)
+        rvUsersList = findViewById(R.id.rvUsers)
         emptyListMessage = findViewById(R.id.tvNoItemsInList)
         btClearUsersList = findViewById(R.id.btClearUsersList)
+        progressBar = findViewById(R.id.progressBar)
     }
 
     private fun createUsersListFromJson(json: String?): ArrayList<User> {
@@ -109,96 +89,71 @@ class MainActivity : AppCompatActivity() {
         return Gson().fromJson(json, listType)
     }
 
-    private fun createJsonFromFactsList(facts: ArrayList<User>): String {
-        return Gson().toJson(facts)
+    private fun createJsonFromUsersList(users: ArrayList<User>): String {
+        return Gson().toJson(users)
     }
 
     private fun getAllUsers() {
-        val api = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(API::class.java)
+        progressBarVisible()
+        Thread {
+            val api = Retrofit.Builder().baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create()).build().create(API::class.java)
 
-        api.getUsers(100).enqueue(object : Callback<UserResponse> {
-            override fun onResponse(
-                call: Call<UserResponse>,
-                response: Response<UserResponse>
-            ) {
-                if (response.code() == 200) {
-                    users.clear()
-                    if (response.body()?.results?.isNotEmpty() == true) {
-                        users.addAll(response.body()?.results!!)
-                        adapter.notifyDataSetChanged()
-                        users.forEach { user ->
-                            Log.i(TAG, "onResponse: ${user.name.first} ${user.name.last}")
-                            swipeToRefresh.isRefreshing = false
+            api.getUsers(100).enqueue(object : Callback<UserResponse> {
+                override fun onResponse(
+                    call: Call<UserResponse>, response: Response<UserResponse>
+                ) {
+                    if (response.code() == 200) {
+                        val newUsers = response.body()?.results ?: emptyList()
+                        runOnUiThread {
+                            users.clear()
+                            users.addAll(newUsers)
+                            adapter.notifyDataSetChanged()
                             val sharedPreferences =
                                 getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
                             sharedPreferences.edit()
-                                .putString(USERS_PREF_KEY, createJsonFromFactsList(adapter.users))
+                                .putString(USERS_PREF_KEY, createJsonFromUsersList(adapter.users))
                                 .apply()
-                            messageVisibilityCheck()
+                            messageVisibility()
                         }
                     } else {
+                        runOnUiThread {
+                            Toast.makeText(
+                                applicationContext,
+                                getString(R.string.st_no_internet),
+                                Toast.LENGTH_LONG
+                            ).show()
+                            messageVisibility()
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                    runOnUiThread {
+                        Log.i(TAG, "onFailure: ${t.message}")
                         Toast.makeText(
                             applicationContext,
-                            "Ничего не нашлось",
+                            getString(R.string.st_something_wrong),
                             Toast.LENGTH_LONG
                         ).show()
-
-                        swipeToRefresh.isRefreshing = false
+                        messageVisibility()
                     }
-                } else {
-                    Toast.makeText(
-                        applicationContext,
-                        "Проблемы со связью. Проверьте подключение к интернету",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    messageVisibilityCheck()
-
-                    swipeToRefresh.isRefreshing = false
                 }
-            }
-
-            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                Log.i(TAG, "onFailure: ${t.message}")
-                Toast.makeText(
-                    applicationContext,
-                    "Проблемы со связью. Проверьте подключение к интернету",
-                    Toast.LENGTH_LONG
-                ).show()
-                swipeToRefresh.isRefreshing = false
-            }
-
-        })
+            })
+        }.start()
     }
 
-
-    private fun messageVisibilityCheck() {
-        if (users.isEmpty()) {
-            emptyListMessage.visibility = View.VISIBLE
-            btClearUsersList.visibility = View.GONE
-        } else {
-            emptyListMessage.visibility = View.GONE
-            btClearUsersList.visibility = View.VISIBLE
-        }
+    private fun messageVisibility() {
+        emptyListMessage.visibility = if (users.isEmpty()) View.VISIBLE else View.GONE
+        btClearUsersList.visibility = if (users.isEmpty()) View.GONE else View.VISIBLE
+        progressBar.visibility = View.GONE
+        rvUsersList.visibility = View.VISIBLE
     }
 
-    private fun showMessage(text: String, additionalMessage: String) {
-        if (text.isNotEmpty()) {
-            //placeholderMessage.visibility = View.VISIBLE
-            users.clear()
-            adapter.notifyDataSetChanged()
-            //placeholderMessage.text = text
-            Toast.makeText(applicationContext, text, Toast.LENGTH_LONG)
-                .show()
-            /*if (additionalMessage.isNotEmpty()) {
-
-            }
-        } else {
-            //placeholderMessage.visibility = View.GONE
-        }*/
-        }
+    private fun progressBarVisible() {
+        btClearUsersList.visibility = View.GONE
+        emptyListMessage.visibility = View.GONE
+        rvUsersList.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
     }
 }

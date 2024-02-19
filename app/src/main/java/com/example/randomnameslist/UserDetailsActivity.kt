@@ -1,7 +1,6 @@
 package com.example.randomnameslist
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,6 +20,10 @@ class UserDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_details)
+        supportActionBar?.apply {
+            title = "Данные пользователя"
+            setDisplayHomeAsUpEnabled(true)
+        }
 
         initViews()
         initListeners()
@@ -71,5 +74,10 @@ class UserDetailsActivity : AppCompatActivity() {
                 .show()
             true
         }
+    }
+
+       override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 }
