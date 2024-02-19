@@ -1,7 +1,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,77 +17,82 @@
             android:layout_marginTop="8dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_user_placeholder"
-            app:shapeAppearanceOverlay="@style/rounded_corners"
-            app:layout_constraintDimensionRatio="h, 1:1"/>
+            app:layout_constraintDimensionRatio="h, 1:1"
+            app:shapeAppearanceOverlay="@style/rounded_corners" />
 
         <TextView
             android:id="@+id/tvFullName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
             android:paddingTop="8dp"
-            android:textColor="@color/black"
             android:text="Иван Иванов"
-            android:textStyle="bold"/>
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
             android:paddingTop="8dp"
-            android:text="Возраст:"/>
+            android:text="Возраст:"
+            android:textSize="14sp" />
+
         <TextView
             android:id="@+id/tvFullAge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
             android:paddingTop="8dp"
+            android:text="69"
             android:textColor="@color/black"
-            android:text="69" />
+            android:textSize="18sp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
             android:paddingTop="8dp"
-            android:text="Адрес:"/>
+            android:text="Адрес:"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/tvFullAdress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
             android:paddingTop="8dp"
+            android:text="Новоильинка Новосёлов 123"
             android:textColor="@color/black"
-            android:text="Новоильинка Новосёлов 123" />
+            android:textSize="18sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
             android:paddingTop="8dp"
-            android:text="Телефон:"/>
+            android:text="Телефон:"
+            android:textSize="14sp" />
+
         <TextView
             android:id="@+id/tvFullPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
             android:paddingTop="8dp"
+            android:text="+79876543210"
             android:textColor="@color/black"
-            android:text="+79876543210" />
+            android:textSize="18sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
             android:paddingTop="8dp"
-            android:text="Почта:"/>
+            android:text="Почта:"
+            android:textSize="14sp" />
+
         <TextView
             android:id="@+id/tvFullEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
             android:paddingTop="8dp"
+            android:text="test@test.ru"
             android:textColor="@color/black"
-            android:text="test@test.ru" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 
