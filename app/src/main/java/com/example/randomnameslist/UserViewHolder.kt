@@ -13,16 +13,14 @@ class UserViewHolder(parent: ViewGroup) :
             .inflate(R.layout.user_item, parent, false)) {
 
     var userImage: ImageView = itemView.findViewById(R.id.ivUserImage)
-    var userFirstName: TextView = itemView.findViewById(R.id.tvUserFirstName)
-    var userLastName: TextView = itemView.findViewById(R.id.tvUserLastName)
+    var userName: TextView = itemView.findViewById(R.id.tvUserName)
     var userAdress: TextView = itemView.findViewById(R.id.tvUserAdress)
     var userPhoneNumber: TextView = itemView.findViewById(R.id.tvUserPhoneNumber)
 
 
     fun bind(user: User) {
-        userFirstName.text = user.name.first
-        userLastName.text = user.name.last
-        userAdress.text = "${user.location.country} ${user.location.city} ${user.location.street}"
+        userName.text = "${user.name.first} ${user.name.last}"
+        userAdress.text = "${user.location.country}, ${user.location.city}, ${user.location.street.number} ${user.location.street.name}"
         userPhoneNumber.text = user.phone
         Glide.with(itemView)
             .load(user.picture.thumbnail)
