@@ -3,4 +3,7 @@
     <string name="something_went_wrong">Проблемы со связью Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="nothing_found">Ничего не нашлось</string>
     <string name="something_went_wrong_harder">"Проблемы с программой "</string>
+    <string name="st_random_users">Случайные пользователи</string>
+    <string name="st_refresh_message">Не удалось загрузить данные пользователей или список пуст. Потяните вниз для повторной попытки \n↓</string>
+    <string name="st_clear_list">Очистить список</string>
 </resources>
